@@ -31,8 +31,45 @@ type Report = {
   timestamp: string;
 };
 
-const DEMO_LAT = 25.6751;
-const DEMO_LON = 94.1086;
+const LOCATIONS = [
+  {
+    state: "Sikkim",
+    district: "Gangtok",
+    latitude: 27.3389,
+    longitude: 88.6065,
+  },
+  {
+    state: "Sikkim",
+    district: "Mangan",
+    latitude: 27.5095,
+    longitude: 88.5362,
+  },
+  {
+    state: "Mizoram",
+    district: "Aizawl",
+    latitude: 23.7271,
+    longitude: 92.7176,
+  },
+  {
+    state: "Meghalaya",
+    district: "Shillong",
+    latitude: 25.5788,
+    longitude: 91.8933,
+  },
+  {
+    state: "Meghalaya",
+    district: "Tura",
+    latitude: 25.514,
+    longitude: 90.202,
+  },
+  {
+    state: "Nagaland",
+    district: "Kohima",
+    latitude: 25.6751,
+    longitude: 94.1086,
+  },
+];
+const MAP_CENTER: [number, number] = [25.6751, 94.1086];
 
 function riskColor(level: string | undefined) {
   switch (level) {
@@ -225,8 +262,8 @@ function App() {
           </div>
 
           <MapContainer
-            center={[DEMO_LAT, DEMO_LON]}
-            zoom={11}
+            center={MAP_CENTER}
+            zoom={6}
             className="leaflet-map"
             scrollWheelZoom={false}
           >
@@ -235,15 +272,26 @@ function App() {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            <Circle
-              center={[DEMO_LAT, DEMO_LON]}
-              radius={4000}
-              pathOptions={{ color, fillColor: color, fillOpacity: 0.35 }}
-            >
-              <Popup>
-                {risk?.location ?? "Demo Zone"} — {risk?.risk_level ?? "—"} risk
-              </Popup>
-            </Circle>
+            {LOCATIONS.map((location) => (
+  <Circle
+    key={location.district}
+    center={[location.latitude, location.longitude]}
+    radius={4000}
+    pathOptions={{
+      color,
+      fillColor: color,
+      fillOpacity: 0.35,
+    }}
+  >
+    <Popup>
+      <strong>{location.district}</strong>
+      <br />
+      {location.state}
+      <br />
+      Risk: {risk?.risk_level ?? "Loading..."}
+    </Popup>
+  </Circle>
+))}
           </MapContainer>
 
           <p className="prototype-note">
